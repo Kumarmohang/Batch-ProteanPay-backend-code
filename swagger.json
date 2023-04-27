@@ -1,0 +1,1613 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Invoice Platform merchant API specifications document",
+    "version": "1.0.0",
+    "description": "This document contains the list of apis, endpoints and signatures of the platform for the merchant use.",
+    "x-logo": {
+      "url": "https://www.perpetualblock.io/wp-content/uploads/2022/02/PB_logo_wide.png"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://dev.invoices.perpetualblock.io/api/v1",
+      "description": "Development environment API host"
+    }
+  ],
+  "paths": {
+    "/merchant/directory/create": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/createDirectory"
+              }
+            }
+          },
+          "required": true
+        },
+        "tags": ["Directory"],
+        "parameters": [
+          {
+            "name": "Accept-Encoding",
+            "description": "The Accept-Encoding request HTTP header indicates the content encoding (usually a compression algorithm) that the client can understand.",
+            "schema": {
+              "type": "string",
+              "example": "gzip, deflate, br"
+            },
+            "in": "header",
+            "required": false
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/directoryResponse"
+                }
+              }
+            },
+            "description": "Directory created successfully",
+            "headers": {},
+            "links": {}
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error400Schema"
+                }
+              }
+            },
+            "description": "Invalid parameters/values. The response contains the error message."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error401Schema"
+                }
+              }
+            },
+            "description": "Unauthorized request. The response contains the error message."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error403Schema"
+                }
+              }
+            },
+            "description": "User don't have required permission"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error409Schema"
+                }
+              }
+            },
+            "description": "Directory Identifier already exists"
+          }
+        },
+        "operationId": "Create directory",
+        "description": "This API is used to create a new directory for invoices.",
+        "security": [
+          {
+            "APIKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/merchant/directory": {
+      "get": {
+        "tags": ["Directory"],
+        "parameters": [
+          {
+            "name": "Accept-Encoding",
+            "description": "The Accept-Encoding request HTTP header indicates the content encoding (usually a compression algorithm) that the client can understand.",
+            "schema": {
+              "type": "string",
+              "example": "gzip, deflate, br"
+            },
+            "in": "header",
+            "required": false
+          },
+          {
+            "example": "pro",
+            "name": "search",
+            "description": "Search keyword",
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "limit",
+            "description": "The number of records to return. The default value is 10.",
+            "schema": {
+              "default": 10,
+              "type": "integer"
+            },
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "offset",
+            "description": "The number of records to skip. The default value is 0.",
+            "schema": {
+              "default": 0,
+              "type": "integer"
+            },
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "sort",
+            "description": "Directory attribute with which record will be sorted.e.g - sort=startDate_asc",
+            "schema": {
+              "default": null,
+              "type": "string"
+            },
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "search",
+            "description": "Directory name or identifier to search e.g. search=PRJ1",
+            "schema": {
+              "default": null,
+              "type": "string"
+            },
+            "in": "query",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/directoryListResponse"
+                }
+              }
+            },
+            "description": "List of directory."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error400Schema"
+                }
+              }
+            },
+            "description": "Invalid parameters/values. The response contains the error message."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error401Schema"
+                }
+              }
+            },
+            "description": "Unauthorised request. The response contains the error message."
+          }
+        },
+        "security": [
+          {
+            "APIKeyAuth": []
+          }
+        ],
+        "operationId": "Get Directory list",
+        "description": "API for fetching list of all the directories for logged in user."
+      }
+    },
+    "/merchant/directory/details": {
+      "summary": "Get directory details",
+      "description": "API for getting directory details by customDirectoryIdentifier.",
+      "get": {
+        "tags": ["Directory"],
+        "parameters": [
+          {
+            "name": "Accept-Encoding",
+            "description": "The Accept-Encoding request HTTP header indicates the content encoding (usually a compression algorithm) that the client can understand.",
+            "schema": {
+              "type": "string",
+              "example": "gzip, deflate, br"
+            },
+            "in": "header",
+            "required": false
+          },
+          {
+            "name": "customDirectoryIdentifier",
+            "description": "The identifier of directory generated by merchant while  directory creation",
+            "schema": {
+              "type": "string",
+              "example": "PRJ1"
+            },
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/directoryResponse"
+                }
+              }
+            },
+            "description": "Directory details"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error404Schema"
+                }
+              }
+            },
+            "description": "This response comes when the directory with a given customDirectoryIdentifier is not found."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error400Schema"
+                }
+              }
+            },
+            "description": "Invalid parameters/values. The response contains the error message."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error401Schema"
+                }
+              }
+            },
+            "description": "Unauthorized request. The response contains the error message."
+          }
+        },
+        "security": [
+          {
+            "APIKeyAuth": []
+          }
+        ],
+        "operationId": "Get Directory details",
+        "description": "Get directory details by directory id"
+      }
+    },
+    "/merchant/invoice/create": {
+      "post": {
+        "tags": ["Invoice"],
+        "description": "API for creating new Invoice inside a directory.",
+        "operationId": "Create Invoice",
+        "security": [
+          {
+            "APIKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "description": "The Accept-Encoding request HTTP header indicates the content encoding (usually a compression algorithm) that the client can understand.",
+            "schema": {
+              "type": "string",
+              "example": "gzip, deflate, br"
+            },
+            "required": false
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/createInvoice"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Invoice created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/invoiceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters/values. The response contains the error message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error400Schema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized request. The response contains the error message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error401Schema"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User don't have required permission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error403Schema"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "When custom invoice Id already exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error409Schema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/merchant/invoice": {
+      "summary": "Get list invoice ",
+      "description": "API for invoice list",
+      "get": {
+        "security": [
+          {
+            "APIKeyAuth": []
+          }
+        ],
+        "tags": ["Invoice"],
+        "parameters": [
+          {
+            "name": "Accept-Encoding",
+            "description": "The Accept-Encoding request HTTP header indicates the content encoding (usually a compression algorithm) that the client can understand.",
+            "schema": {
+              "type": "string",
+              "example": "gzip, deflate, br"
+            },
+            "in": "header",
+            "required": false
+          },
+          {
+            "name": "status",
+            "schema": {
+              "type": "string",
+              "enum": ["pending", "approved", "paid"]
+            },
+            "example": "completed",
+            "description": "status of invoice",
+            "in": "query"
+          },
+          {
+            "name": "directoryId",
+            "description": "The identifier of directory generated by invoice platform",
+            "schema": {
+              "type": "string",
+              "example": "7c27b43e-1733-4382-bd37-48ca39d719f2"
+            },
+            "in": "query"
+          },
+          {
+            "name": "customDirectoryIdentifier",
+            "description": "The identifier of directory generated by merchant while  directory creation",
+            "schema": {
+              "type": "string",
+              "example": "PRJ1"
+            },
+            "in": "query"
+          },
+          {
+            "name": "limit",
+            "description": "The number of records to return. The default value is 10.",
+            "schema": {
+              "default": 10,
+              "type": "integer"
+            },
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "offset",
+            "description": "The number of records to skip. The default value is 0.",
+            "schema": {
+              "default": 0,
+              "type": "integer"
+            },
+            "in": "query",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/invoiceListResponse"
+                }
+              }
+            },
+            "description": "Invoice list"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error400Schema"
+                }
+              }
+            },
+            "description": "Invalid parameters/values. The response contains the error message."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error401Schema"
+                }
+              }
+            },
+            "description": "Unauthorized request. The response contains the error message."
+          }
+        },
+        "operationId": "Get Invoices",
+        "description": "Get Invoices list"
+      }
+    },
+    "/merchant/invoice/details": {
+      "summary": "Get invoice details",
+      "description": "API for getting invoice details by customInvoiceIdentifier or invoiceId. Either one of the field is required from customInvoiceIdentifier, invoiceId",
+      "get": {
+        "tags": ["Invoice"],
+        "security": [
+          {
+            "APIKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Accept-Encoding",
+            "description": "The Accept-Encoding request HTTP header indicates the content encoding (usually a compression algorithm) that the client can understand.",
+            "schema": {
+              "type": "string",
+              "example": "gzip, deflate, br"
+            },
+            "in": "header",
+            "required": false
+          },
+          {
+            "name": "invoiceId",
+            "description": "The identifier of invoice generated by invoice platform",
+            "schema": {
+              "type": "string",
+              "example": "7c27b43e-1733-4382-bd37-48ca39d719f2"
+            },
+            "in": "query"
+          },
+          {
+            "name": "customInvoiceIdentifier",
+            "description": "The identifier of invoice generated by merchant while invoice creation",
+            "schema": {
+              "type": "string",
+              "example": "PRJ1"
+            },
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/invoiceDetailResponse"
+                }
+              }
+            },
+            "description": "invoice details"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error404Schema"
+                }
+              }
+            },
+            "description": "This response comes when the invoice with a given customDirectoryIdentifier is not found."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error400Schema"
+                }
+              }
+            },
+            "description": "Invalid parameters/values. The response contains the error message."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error401Schema"
+                }
+              }
+            },
+            "description": "Unauthorized request. The response contains the error message."
+          }
+        },
+        "operationId": "Get invoice details",
+        "description": "Get invoice details by invoice id"
+      }
+    },
+    "/merchant/invoice/html": {
+      "summary": "Get Generated Invoice html",
+      "description": "API for getting invoice html",
+      "get": {
+        "tags": ["Invoice"],
+        "parameters": [
+          {
+            "name": "Accept-Encoding",
+            "description": "The Accept-Encoding request HTTP header indicates the content encoding (usually a compression algorithm) that the client can understand.",
+            "schema": {
+              "type": "string",
+              "example": "gzip, deflate, br"
+            },
+            "in": "header",
+            "required": false
+          },
+          {
+            "name": "customInvoiceIdentifier",
+            "description": "The identifier of directory generated by merchant while invoice  creation",
+            "schema": {
+              "type": "string",
+              "example": "invoice1"
+            },
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/invoiceHTMLResponse"
+                }
+              }
+            },
+            "description": "Invoice HTML"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error404Schema"
+                }
+              }
+            },
+            "description": "This response comes when the directory with a given customDirectoryIdentifier is not found."
+          }
+        },
+        "security": [
+          {
+            "APIKeyAuth": []
+          }
+        ],
+        "operationId": "Get Invoice HTML",
+        "description": "Get Invoice HTML by Custom Invoice Identifier"
+      }
+    },
+    "/merchant/invoice/status": {
+      "summary": "Get Generated Invoice status",
+      "description": "API for getting invoice status",
+      "get": {
+        "tags": ["Invoice"],
+        "parameters": [
+          {
+            "name": "Accept-Encoding",
+            "description": "The Accept-Encoding request HTTP header indicates the content encoding (usually a compression algorithm) that the client can understand.",
+            "schema": {
+              "type": "string",
+              "example": "gzip, deflate, br"
+            },
+            "in": "header",
+            "required": false
+          },
+          {
+            "name": "customInvoiceIdentifier",
+            "description": "The identifier of invoice generated by merchant while invoice  creation",
+            "schema": {
+              "type": "string",
+              "example": "invoice1"
+            },
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/invoiceStatusResponse"
+                }
+              }
+            },
+            "description": "Invoice status"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error404Schema"
+                }
+              }
+            },
+            "description": "This response comes when the invoice with a given customInvoiceIdentifier/invoiceId is not found."
+          }
+        },
+        "security": [
+          {
+            "APIKeyAuth": []
+          }
+        ],
+        "operationId": "Get Invoice Status",
+        "description": "Get Invoice status by invoice id"
+      }
+    },
+    "/merchant/invoice/delete": {
+      "delete": {
+        "tags": ["Invoice"],
+        "parameters": [
+          {
+            "name": "Accept-Encoding",
+            "description": "The Accept-Encoding request HTTP header indicates the content encoding (usually a compression algorithm) that the client can understand.",
+            "schema": {
+              "type": "string",
+              "example": "gzip, deflate, br"
+            },
+            "in": "header",
+            "required": false
+          },
+          {
+            "name": "customInvoiceIdentifier",
+            "description": "The identifier of invoice generated by merchant while invoice  creation",
+            "schema": {
+              "type": "string",
+              "example": "invoice1"
+            },
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Invoice deleted successfully"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error404Schema"
+                }
+              }
+            },
+            "description": "This response comes when the invoice with a given customInvoiceIdentifier is not found."
+          }
+        },
+        "security": [
+          {
+            "APIKeyAuth": []
+          }
+        ],
+        "operationId": "Delete invoice",
+        "description": "Delete invoice  by custom invoice identifier. Only invoice with 'pending' status will be deleted."
+      }
+    },
+    "/merchant/auth/getOneTimeToken": {
+      "summary": "Generate one time access token on behalf of user",
+      "description": "Generate one time access token on behalf of user for directly login into platform",
+      "post": {
+        "tags": ["Auth"],
+        "parameters": [
+          {
+            "name": "Accept-Encoding",
+            "description": "The Accept-Encoding request HTTP header indicates the content encoding (usually a compression algorithm) that the client can understand.",
+            "schema": {
+              "type": "string",
+              "example": "gzip, deflate, br"
+            },
+            "in": "header",
+            "required": false
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/payer"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Auth token generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/oneTimeAuthTokenResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters/values. The response contains the error message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error400Schema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized request. The response contains the error message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error401Schema"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User don't have required permission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error403Schema"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyAuth": []
+          }
+        ],
+        "operationId": "Generate one time access token.",
+        "description": "The api generate the one time access token for user"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "directory": {
+        "required": ["name", "directoryId", "customDirectoryIdentifier"],
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Name of the directory",
+            "type": "string",
+            "example": "Directory 1"
+          },
+          "customDirectoryIdentifier": {
+            "description": "Unique Identifier for directory",
+            "type": "string",
+            "example": "PRJ1"
+          },
+          "directoryId": {
+            "description": "Directory id",
+            "type": "string",
+            "example": "f912b149-e7a0-49dc-bf79-e5b60c03d038"
+          },
+          "startDate": {
+            "description": "Start date of the directory",
+            "type": "string",
+            "example": "1970-01-20T02:58:48.163Z"
+          },
+          "endDate": {
+            "description": "End date of the directory",
+            "type": "string",
+            "example": "1970-01-20T02:58:48.163Z"
+          },
+          "isBatchTransactionOnly":{
+            "description": "Flag to enable only batch transaction option for directory",
+            "type": "string",
+            "example": "true"
+          }
+        }
+      },
+      "directoryList": {
+        "required": [
+          "name",
+          "directoryId",
+          "customDirectoryIdentifier",
+          "statistics",
+          "createAt"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Name of the directory",
+            "type": "string",
+            "example": "Directory 1"
+          },
+          "customDirectoryIdentifier": {
+            "description": "Unique Identifier for directory",
+            "type": "string",
+            "example": "PRJ1"
+          },
+          "directoryId": {
+            "description": "Directory id",
+            "type": "string",
+            "example": "f912b149-e7a0-49dc-bf79-e5b60c03d038"
+          },
+          "statistics": {
+            "type": "object",
+            "properties": {
+              "totalInvoices": {
+                "type": "number",
+                "example": 32,
+                "description": "total number of invoice generated in directory"
+              },
+              "pendingInvoices": {
+                "type": "number",
+                "example": 12,
+                "description": "total number of pending invoices in directory"
+              },
+              "paidInvoices": {
+                "type": "number",
+                "example": 10,
+                "description": "total number of paid invoices  in directory"
+              },
+              "approvedInvoices": {
+                "type": "number",
+                "example": 10,
+                "description": "total number of approved invoice in directory"
+              }
+            }
+          },
+          "createAt": {
+            "type": "string",
+            "description": "Date and time when directory created",
+            "example": "19"
+          },
+          "startDate": {
+            "description": "Start date of the directory",
+            "type": "string",
+            "example": "1970-01-20T02:58:48.163Z"
+          },
+          "endDate": {
+            "description": "End date of the directory",
+            "type": "string",
+            "example": "1970-01-20T02:58:48.163Z"
+          }
+        }
+      },
+      "invoice": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "7c27b43e-1733-4382-bd37-48ca39d719f2",
+            "description": "The identifier of invoice generated by invoice platform"
+          },
+          "customInvoiceIdentifier": {
+            "type": "string",
+            "example": "7c27b43e-1733-4382-bd37-48ca39d719f2",
+            "description": "The identifier of invoice generated by merchant while invoice  creation"
+          },
+          "status": {
+            "type": "string",
+            "example": "completed",
+            "description": "status of invoice",
+            "enum": ["pending", "approved", "paid"]
+          },
+          "creationDate": {
+            "type": "string",
+            "example": "1970-01-20T02:58:48.163Z",
+            "description": "Creation/Invoice date"
+          },
+          "from": {
+            "type": "string",
+            "example": "<b>serum institute</b>",
+            "description": "Markup text for 'from' to be shown on invoice."
+          },
+          "tags": {
+            "type": "array",
+            "example": ["cancer", "latest", "inject"],
+            "items": {
+              "type": "string"
+            },
+            "description": "Custom tags for invoice."
+          },
+          "memo": {
+            "type": "string",
+            "example": "this invoice is for cancer survey data",
+            "description": "Memo for invoice"
+          },
+          "taxPercent": {
+            "type":"number",
+            "example": "12.4",
+            "description":" tax applicable to invoice in percentage"
+          },
+          "taxAmount": {
+            "type": "number",
+            "example":"23.5",
+            "description": "tax applicable to invoice in AMR"
+          },
+          "discountPercent": {
+            "type":"number",
+            "example": "34.5",
+            "description":" discount applicable to invoice in percentage"
+          },
+          "discountAmount": {
+            "type": "number",
+            "example":"50.5",
+            "description": "discount applicable to invoice in AMR"
+          },
+          "totalAmount": {
+            "type": "number",
+            "example":"500.6",
+            "description": "sum of amounts of invoice items"
+          },
+          "extraData": {
+            "type": "array",
+            "example": [{ "keyName": "Note", "value": "No refund" }],
+            "description": "Extra data to be mention in 'extra data' section on invoice",
+            "items": {
+              "type": "object",
+              "required": ["keyName", "value"],
+              "properties": {
+                "keyName": {
+                  "type": "string",
+                  "description": "Key to be displayed on invoice",
+                  "example": "Note"
+                },
+                "value": {
+                  "oneOf": [
+                    { "type": "number", "example": 1 },
+                    { "type": "string", "example": "No refund" }
+                  ],
+                  "description": "Key to be displayed on invoice",
+                  "example": "Note"
+                }
+              }
+            }
+          },
+          "tokenSymbol": {
+            "type": "string",
+            "example": "AMR",
+            "description": "Symbol of token for transaction"
+          },
+          "destinationPublicAddress": {
+            "type": "string",
+            "example": "0xe5a4b900c7d3cEAae41D4d33014d27E93a2DA111",
+            "description": "wallet address of receiver"
+          },
+          "invoiceItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/invoiceItems"
+            }
+          },
+          "payer": {
+            "type": "object",
+            "required": ["email", "payerText"],
+            "properties": {
+              "email": {
+                "type": "string",
+                "description": "Email id of payer",
+                "example": "payer@email.com"
+              },
+              "payerText": {
+                "type": "string",
+                "description": "Markup text for 'payer' to be shown on invoice",
+                "example": "<i>Payer</i>"
+              }
+            }
+          }
+        }
+      },
+      "invoiceItems": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "example": "this is invoice item for cancer data 1",
+            "description": "Invoice item description"
+          },
+          "quantity": {
+            "type": "integer",
+            "example": "30",
+            "description": "Quantity of the item"
+          },
+          "rate": {
+            "type": "number",
+            "example": "30",
+            "description": "Item rates"
+          },
+          "taxPercent": {
+            "type": "number",
+            "example": "20.3",
+            "description": "Percentage of tax applied"
+          },
+          "amount":{
+            "type":"number",
+            "example": "200.0",
+            "description": "token amount with respect to the invoice item"
+          },
+          "extraData": {
+            "type": "array",
+            "example": [{ "keyName": "Note", "value": "No refund" }],
+            "description": "Extra data to be mention in 'extra data' section on invoice",
+            "items": {
+              "type": "object",
+              "required": ["keyName", "value"],
+              "properties": {
+                "keyName": {
+                  "type": "string",
+                  "description": "Key to be displayed on invoice",
+                  "example": "Note"
+                },
+                "value": {
+                  "oneOf": [
+                    { "type": "number", "example": 1 },
+                    { "type": "string", "example": "No refund" }
+                  ],
+                  "description": "Key to be displayed on invoice",
+                  "example": "Note"
+                }
+              }
+            }
+          }
+        }
+      },
+      "directoryResponse": {
+        "description": "Directory create response object.",
+        "required": ["data"],
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/directory"
+          }
+        }
+      },
+      "directoryListResponse": {
+        "required": ["data"],
+        "type": "object",
+        "properties": {
+          "data": {
+            "required": ["results", "total"],
+            "type": "object",
+            "properties": {
+              "results": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/directoryList"
+                }
+              },
+              "total": {
+                "description": "Total number of record found",
+                "type": "number",
+                "example": 35
+              }
+            }
+          }
+        }
+      },
+      "invoiceMetaData": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "7c27b43e-1733-4382-bd37-48ca39d719f2",
+            "description": "The identifier of invoice"
+          },
+          "customInvoiceIdentifier": {
+            "type": "string",
+            "example": "7c27b43e-1733-4382-bd37-48ca39d719f2",
+            "description": "The identifier of invoice created by platform."
+          },
+          "creationDate": {
+            "type": "string",
+            "example": "12/02/2022",
+            "description": "Creation date of invoice"
+          },
+          "from": {
+            "type": "string",
+            "example": "serum institute",
+            "description": "sender name/email to mention in invoice"
+          },
+          "tokenSymbol": {
+            "type": "string",
+            "example": "AMR",
+            "description": "Symbol of the token for transaction"
+          },
+          "destinationPublicAddress": {
+            "type": "string",
+            "example": "0xe5a4b900c7d3cEAae41D4d33014d27E93a2DA111",
+            "description": "wallet address of receiver"
+          },
+          "status": {
+            "type": "string",
+            "example": "completed",
+            "description": "status of invoice",
+            "enum": ["pending", "approved", "paid"]
+          },
+          "payer": {
+            "type": "object",
+            "required": ["email", "payerText"],
+            "properties": {
+              "email": {
+                "type": "string",
+                "description": "Email id of payer",
+                "example": "payer@email.com"
+              },
+              "payerText": {
+                "type": "string",
+                "description": "Markup text for 'payer' to be shown on invoice",
+                "example": "<i>Payer</i>"
+              }
+            }
+          }
+        }
+      },
+      "invoiceListResponse": {
+        "required": ["data"],
+        "type": "object",
+        "properties": {
+          "data": {
+            "required": ["results", "total"],
+            "type": "object",
+            "properties": {
+              "results": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/invoiceMetaData"
+                }
+              },
+              "total": {
+                "description": "Total number of record found",
+                "type": "number",
+                "example": 35
+              }
+            }
+          }
+        }
+      },
+      "createInvoice": {
+        "type": "object",
+        "required": [
+          "customDirectoryIdentifier",
+          "customInvoiceIdentifier",
+          "invoiceItems",
+          "creationDate",
+          "from",
+          "tokenSymbol",
+          "destinationPublicAddress",
+          "payer",
+          "totalAmount",
+          "discountAmount",
+          "discountPercent",
+          "taxPercent",
+          "taxAmount"
+        ],
+        "description": "Post Schema for invoice creation",
+        "properties": {
+          "customDirectoryIdentifier": {
+            "description": "Unique Identifier for directory created by merchant",
+            "type": "string",
+            "example": "PRJ1"
+          },
+          "customInvoiceIdentifier": {
+            "type": "string",
+            "example": "7c27b43e-1733-4382-bd37-48ca39d719f2",
+            "description": "The identifier of invoice created by merchant ."
+          },
+          "creationDate": {
+            "type": "string",
+            "example": "1970-01-20T02:58:48.163Z",
+            "description": "Creation/Invoice date"
+          },
+          "from": {
+            "type": "string",
+            "example": "<b>serum institute</b>",
+            "description": "Markup text for 'from' to be shown on invoice."
+          },
+          "tags": {
+            "type": "array",
+            "example": ["cancer", "latest", "inject"],
+            "items": {
+              "type": "string"
+            },
+            "description": "Custom tags for invoice."
+          },
+          "memo": {
+            "type": "string",
+            "example": "this invoice is for cancer survey data",
+            "description": "Memo for invoice"
+          },
+          "extraData": {
+            "type": "array",
+            "example": [{ "keyName": "Note", "value": "No refund" }],
+            "description": "Extra data to be mention in 'extra data' section on invoice",
+            "items": {
+              "type": "object",
+              "required": ["keyName", "value"],
+              "properties": {
+                "keyName": {
+                  "type": "string",
+                  "description": "Key to be displayed on invoice",
+                  "example": "Note"
+                },
+                "value": {
+                  "oneOf": [
+                    { "type": "number", "example": 1 },
+                    { "type": "string", "example": "No refund" }
+                  ],
+                  "description": "Key to be displayed on invoice",
+                  "example": "Note"
+                }
+              }
+            }
+          },
+          "tokenSymbol": {
+            "type": "string",
+            "example": "AMR",
+            "description": "Symbol of token for transaction"
+          },
+          "destinationPublicAddress": {
+            "type": "string",
+            "example": "0xe5a4b900c7d3cEAae41D4d33014d27E93a2DA111",
+            "description": "wallet address of receiver"
+          },
+          "taxPercent": {
+            "type":"number",
+            "example": "12.4",
+            "description":" tax applicable to invoice in percentage"
+          },
+          "taxAmount": {
+            "type": "number",
+            "example":"23.5",
+            "description": "tax applicable to invoice in AMR"
+          },
+          "discountPercent": {
+            "type":"number",
+            "example": "34.5",
+            "description":" discount applicable to invoice in percentage"
+          },
+          "discountAmount": {
+            "type": "number",
+            "example":"50.5",
+            "description": "discount applicable to invoice in AMR"
+          },
+          "totalAmount": {
+            "type": "number",
+            "example":"500.6",
+            "description": "sum of amounts of invoice items"
+          },
+          "invoiceItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/invoiceItems"
+            }
+          },
+          "payer": {
+            "type": "object",
+            "required": ["email", "payerText"],
+            "properties": {
+              "email": {
+                "type": "string",
+                "description": "Email id of payer",
+                "example": "payer@email.com"
+              },
+              "payerText": {
+                "type": "string",
+                "description": "Markup text for 'payer' to be shown on invoice",
+                "example": "<i>Payer</i>"
+              }
+            }
+          }
+        }
+      },
+      "invoiceResponse": {
+        "type": "object",
+        "required": ["data"],
+        "description": "Invoice create response object.",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/invoice"
+          }
+        }
+      },
+      "invoiceHTMLResponse": {
+        "type": "object",
+        "required": ["data"],
+        "description": "Invoice HTML response object.",
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": ["invoiceHtml", "invoiceDetail"],
+            "properties": {
+              "invoiceHtml": {
+                "type": "string",
+                "description": "HTML string for generated invoice",
+                "example": "<p>lorem ipsum<em>lorem ipsum</em></p>"
+              },
+              "invoiceDetail": {
+                "$ref": "#/components/schemas/invoice"
+              }
+            }
+          }
+        }
+      },
+      "invoiceDetailResponse": {
+        "description": "Invoice detail response object.",
+        "required": ["data"],
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/invoice"
+          }
+        }
+      },
+      "invoiceStatusResponse": {
+        "description": "Invoice status response object.",
+        "required": ["data"],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": ["pending", "approved", "paid"],
+                "example": "pending",
+                "description": "Status on invoice"
+              },
+              "invoiceId": {
+                "type": "string",
+                "example": "7c27b43e-1733-4382-bd37-48ca39d719f2",
+                "description": "The identifier of invoice generated by invoice platform"
+              },
+              "customInvoiceIdentifier": {
+                "type": "string",
+                "example": "pending",
+                "description": "The identifier of invoice generated by merchant while invoice  creation"
+              }
+            }
+          }
+        }
+      },
+      "error404Schema": {
+        "description": "Error 404 schema",
+        "required": ["message", "errorCode"],
+        "type": "object",
+        "properties": {
+          "message": {
+            "default": "Record not found",
+            "type": "string"
+          },
+          "errorCode": {
+            "default": 404,
+            "type": "number"
+          }
+        }
+      },
+      "error400Schema": {
+        "description": "Error 400 schema",
+        "required": ["message", "errorCode", "field"],
+        "type": "object",
+        "properties": {
+          "message": {
+            "default": "Bad request",
+            "type": "string"
+          },
+          "field": {
+            "description": "Field wise error messages.",
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "required": ["key", "message"],
+              "type": "object",
+              "properties": {
+                "key": {
+                  "description": "Field name",
+                  "type": "string",
+                  "example": "directoryId"
+                },
+                "message": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "description": "Error message",
+                    "type": "string",
+                    "example": "Invalid directoryId"
+                  }
+                }
+              }
+            }
+          },
+          "errorCode": {
+            "default": 400,
+            "type": "number"
+          }
+        }
+      },
+      "error403Schema": {
+        "description": "User don't have required roles and permissions",
+        "required": ["message", "errorCode"],
+        "properties": {
+          "message": {
+            "default": "You don't have required permission to perform this operation.",
+            "type": "string"
+          },
+          "errorCode": {
+            "default": 403,
+            "type": "number"
+          }
+        }
+      },
+      "error401Schema": {
+        "description": "Error 404 schema",
+        "required": ["message", "errorCode"],
+        "type": "object",
+        "properties": {
+          "message": {
+            "default": "Record not found",
+            "type": "string"
+          },
+          "errorCode": {
+            "default": 404,
+            "type": "number"
+          }
+        }
+      },
+      "error409Schema": {
+        "description": "Error 409 schema",
+        "required": ["message", "errorCode"],
+        "type": "object",
+        "properties": {
+          "message": {
+            "default": "Conflict occurred",
+            "type": "string"
+          },
+          "errorCode": {
+            "default": 409,
+            "type": "number"
+          }
+        }
+      },
+      "payer": {
+        "description": "Payer details",
+        "required": ["email"],
+        "type": "object",
+        "properties": {
+          "firstname": {
+            "type": "string",
+            "example": "Jhon"
+          },
+          "lastname": {
+            "type": "string",
+            "example": "Doe"
+          },
+          "email": {
+            "type": "string",
+            "example": "jhon.doe@gmail.com"
+          },
+          "orgName": {
+            "type": "string",
+            "example": "Org1"
+          }
+        },
+        "x-last-modified": 1663315091581
+      },
+      "createDirectory": {
+        "description": "Post Schema for directory creation",
+        "required": ["name", "customDirectoryIdentifier"],
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Name of the directory",
+            "type": "string",
+            "example": "Directory 1"
+          },
+          "customDirectoryIdentifier": {
+            "description": "Unique Identifier for directory",
+            "type": "string",
+            "example": "PRJ1"
+          },
+          "startDate": {
+            "description": "Start date of the directory",
+            "type": "string",
+            "example": "1970-01-20T02:58:48.163Z"
+          },
+          "endDate": {
+            "description": "End date of the directory",
+            "type": "string",
+            "example": "1970-01-20T02:58:48.163Z"
+          },
+          "isBatchTransactionOnly":{
+            "description": "Flag to enable only batch transaction option for directory",
+            "type": "string",
+            "example": "true"
+          }
+        },
+        "x-last-modified": 1663316630424
+      },
+      "oneTimeAuthTokenResponse": {
+        "description": "One Time Authorization response.",
+        "required": ["data"],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "token": {
+                "type": "string",
+                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2MjE5ZmYwZWU1YWZkMjBmNjNlYjg5M2IiLCJyb2xlIjoidXNlciIsImlhdCI6MTY2MjU1MjE4NywiZXhwIjoxNjYzODQ4MTg3fQ.vli74ABva-17b0-UyH1ePsFmdM2EjHg0TZ_uoz7F9LM",
+                "description": "Generated one time token. Pass this token in query param while redirecting to invoice platform"
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      },
+      "APIKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-KEY"
+      }
+    },
+    "headers": {},
+    "responses": {},
+    "parameters": {}
+  },
+  "tags": [
+    {
+      "name": "Directory",
+      "description": "Directory is collection of invoices and can be used to group invoices with respect to project, events etc."
+    },
+    {
+      "name": "Invoice",
+      "description": "An invoice is a document given to the buyer by the seller to collect payment. It includes the cost of the products purchased or services rendered to the buyer."
+    },
+    {
+      "name": "Auth",
+      "description": "Auth related set of APIs"
+    }
+  ]
+}
